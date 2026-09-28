@@ -1,0 +1,7 @@
+node_modules/
+*.log
+.DS_Store
+slides_png/
+concat_list.txt
+audio_notebook.aac
+vigIA_Video_Final.mp4

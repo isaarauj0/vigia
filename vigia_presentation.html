@@ -1,0 +1,749 @@
+<title>vigIA — Pitch 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600&display=swap" rel="stylesheet">
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:      #070A12;
+  --blue:    #3861FF;
+  --violet:  #7C3BFF;
+  --white:   #F0F4FF;
+  --muted:   #8899BB;
+  --danger:  #FF4757;
+  --success: #2ED573;
+  --warn:    #FFC107;
+  --orange:  #FF8C00;
+  --card:    #0D1323;
+  --border:  #1A2340;
+  color-scheme: dark;
+}
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: var(--white);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── PROGRESS BAR ── */
+#progress-bar {
+  position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 100;
+  background: var(--border);
+}
+#progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--blue), var(--violet));
+  transition: width 0.4s cubic-bezier(.4,0,.2,1);
+  width: 10%;
+}
+
+/* ── SLIDES ── */
+#slides {
+  position: fixed;
+  top: 3px; bottom: 68px; left: 0; right: 0;
+}
+.slide {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  padding: 32px 60px 16px;
+  opacity: 0; pointer-events: none;
+  transform: translateY(18px);
+  transition: opacity 0.45s ease, transform 0.45s ease;
+  overflow-y: auto;
+}
+.slide.active {
+  opacity: 1; pointer-events: all; transform: translateY(0);
+}
+.slide.exiting {
+  opacity: 0; transform: translateY(-18px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* ── CONTROLS ── */
+#controls {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  padding: 10px 24px 14px;
+  background: linear-gradient(transparent, rgba(7,10,18,0.96) 30%);
+  z-index: 100;
+}
+.ctrl-btn {
+  background: rgba(13,19,35,0.9); border: 1px solid var(--border);
+  color: var(--white); padding: 7px 14px; border-radius: 8px;
+  font-size: 16px; cursor: pointer;
+  font-family: inherit; transition: all 0.18s;
+  line-height: 1;
+}
+.ctrl-btn:hover { background: var(--blue); border-color: var(--blue); }
+#slide-counter { font-size: 12px; color: var(--muted); min-width: 46px; text-align: center; font-weight: 600; }
+#btn-play { font-size: 11px !important; padding: 7px 12px !important; letter-spacing: 0.02em; }
+#btn-play.playing { color: var(--success); border-color: rgba(46,213,115,0.4); }
+#timer-display {
+  font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums;
+  min-width: 32px; text-align: center; font-weight: 700;
+}
+
+/* ── SLIDE NUM BADGE ── */
+.slide-badge {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+  color: var(--muted); text-transform: uppercase; margin-bottom: 6px;
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp   { from { opacity:0; transform:translateY(22px); } to { opacity:1; transform:none; } }
+@keyframes fadeIn   { from { opacity:0; } to { opacity:1; } }
+@keyframes scaleIn  { from { opacity:0; transform:scale(0.88); } to { opacity:1; transform:scale(1); } }
+@keyframes glowPulse {
+  0%,100% { text-shadow: 0 0 30px rgba(56,97,255,.45); }
+  50%      { text-shadow: 0 0 70px rgba(56,97,255,.9), 0 0 120px rgba(124,59,255,.5); }
+}
+
+.slide.active .a1  { animation: fadeUp  .55s ease  .08s both; }
+.slide.active .a2  { animation: fadeUp  .55s ease  .22s both; }
+.slide.active .a3  { animation: fadeUp  .55s ease  .36s both; }
+.slide.active .a4  { animation: fadeUp  .55s ease  .50s both; }
+.slide.active .a5  { animation: fadeUp  .55s ease  .64s both; }
+.slide.active .a6  { animation: fadeUp  .55s ease  .78s both; }
+.slide.active .a7  { animation: fadeUp  .55s ease  .92s both; }
+.slide.active .ai  { animation: fadeIn  .7s  ease  .1s  both; }
+.slide.active .as  { animation: scaleIn .5s  ease  .05s both; }
+
+/* ── SHARED LAYOUT ── */
+.col { display:flex; flex-direction:column; align-items:center; text-align:center; width:100%; max-width:920px; }
+.divider { width:56px; height:3px; border-radius:2px; background:linear-gradient(90deg,var(--blue),var(--violet)); margin:14px 0; }
+.card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px 20px; }
+
+/* ═══════════ SLIDE 1 — ABERTURA ═══════════ */
+.s1-logo {
+  font-size: 92px; font-weight: 900; letter-spacing: -4px; line-height: 1;
+  color: var(--white);
+  animation: glowPulse 3s ease-in-out infinite;
+}
+.s1-logo .ia { color: var(--blue); }
+.s1-tag { font-size: 21px; font-weight: 600; color: var(--white); margin-top: 6px; }
+.s1-inst { font-size: 13px; color: var(--muted); margin-top: 20px; letter-spacing: 0.02em; }
+.s1-event {
+  margin-top: 24px; padding: 12px 28px;
+  border: 1px solid var(--border); border-radius: 10px; background: var(--card);
+  font-size: 13px; color: var(--muted); line-height: 1.6; text-align: center;
+}
+.s1-event strong { color: var(--blue); font-weight: 700; }
+
+/* ═══════════ SLIDE 2 — PROBLEMA ═══════════ */
+.s2-stat {
+  font-size: 112px; font-weight: 900; line-height: 1;
+  color: var(--danger);
+  text-shadow: 0 0 50px rgba(255,71,87,.4);
+}
+.s2-label { font-size: 26px; font-weight: 700; margin-top: -4px; }
+.s2-src { font-size: 11px; color: var(--muted); margin-top: 4px; font-style: italic; }
+.s2-story { max-width: 540px; font-size: 15px; color: var(--muted); line-height: 1.75; margin-top: 24px; }
+.s2-quote { font-size: 18px; font-weight: 800; color: var(--blue); margin-top: 20px; }
+
+/* ═══════════ SLIDE 3 — SOLUÇÃO ═══════════ */
+.modules { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:22px; }
+.mod {
+  background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+  padding: 14px 16px; min-width: 155px; max-width: 172px; text-align: center;
+}
+.mod.hl { border-color: var(--violet); background: rgba(124,59,255,.1); }
+.mod-n { font-size: 10px; font-weight: 800; letter-spacing: .12em; color: var(--muted); margin-bottom: 5px; }
+.mod-nm { font-size: 13px; font-weight: 700; color: var(--white); }
+.mod.hl .mod-nm { color: var(--violet); }
+.mod-d { font-size: 11px; color: var(--muted); margin-top: 3px; line-height: 1.4; }
+
+/* ═══════════ SLIDE 4 — RADAR ═══════════ */
+.flow { display:flex; align-items:center; gap:0; margin:18px 0; }
+.fstep { display:flex; flex-direction:column; align-items:center; gap:5px; min-width:108px; }
+.fcirc {
+  width: 50px; height: 50px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; border: 2px solid var(--blue);
+  background: rgba(56,97,255,.13);
+}
+.farr { font-size: 16px; color: var(--muted); padding-bottom: 26px; flex-shrink: 0; }
+.flbl { font-size: 10px; font-weight: 700; letter-spacing: .06em; color: var(--white); text-align: center; }
+.fsub { font-size: 9px; color: var(--muted); text-align: center; line-height: 1.35; }
+.radar-msg {
+  background: rgba(56,97,255,.1); border: 1px solid rgba(56,97,255,.3);
+  border-radius: 10px; padding: 12px 20px;
+  font-size: 15px; font-weight: 700; color: var(--blue); max-width: 720px;
+}
+.rchips { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-top:10px; }
+.rchip {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 100px; padding: 5px 14px;
+  font-size: 11px; font-weight: 600; color: var(--white);
+}
+.rchip.no { color: var(--danger); border-color: rgba(255,71,87,.4); background: rgba(255,71,87,.07); }
+
+/* ═══════════ SLIDE 5 — 6 SINAIS ═══════════ */
+.sinais { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:18px; max-width:800px; }
+.sinal { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 13px 15px; }
+.sn-i { font-size: 20px; margin-bottom: 5px; }
+.sn-t { font-size: 12px; font-weight: 700; }
+.sn-d { font-size: 11px; color: var(--muted); margin-top: 3px; line-height: 1.4; }
+
+/* ═══════════ SLIDE 6 — RÉGUA ═══════════ */
+.dims { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-top:14px; }
+.dim {
+  background: rgba(56,97,255,.1); border: 1px solid rgba(56,97,255,.28);
+  border-radius: 8px; padding: 7px 15px; font-size: 12px; font-weight: 600; color: var(--blue);
+}
+.zones { display:flex; gap:8px; margin-top:16px; max-width:680px; }
+.zone { flex:1; border-radius:8px; padding:9px 10px; text-align:center; }
+.zl { font-size:10px; font-weight:800; letter-spacing:.08em; margin-bottom:3px; }
+.zr { font-size:17px; font-weight:800; }
+.za { font-size:9px; margin-top:2px; opacity:.8; }
+.zg { background:rgba(46,213,115,.13); border:1px solid rgba(46,213,115,.3); color:var(--success); }
+.zy { background:rgba(255,193,7,.13);  border:1px solid rgba(255,193,7,.3);  color:var(--warn); }
+.zo { background:rgba(255,140,0,.13);  border:1px solid rgba(255,140,0,.3);  color:var(--orange); }
+.zv { background:rgba(255,71,87,.13);  border:1px solid rgba(255,71,87,.3);  color:var(--danger); }
+.thresholds { display:flex; gap:14px; margin-top:14px; max-width:680px; width:100%; }
+.thr { flex:1; border-radius:10px; padding:12px 16px; text-align:center; }
+.thr-s { font-size:30px; font-weight:900; }
+.thr-l { font-size:11px; font-weight:700; margin-top:3px; }
+.thr-a { font-size:10px; opacity:.75; margin-top:3px; }
+.thr-w { background:rgba(255,193,7,.12); border:1px solid rgba(255,193,7,.3); color:var(--warn); }
+.thr-r { background:rgba(255,71,87,.12); border:1px solid rgba(255,71,87,.3); color:var(--danger); }
+
+/* ═══════════ SLIDE 7 — ROTEAMENTO ═══════════ */
+.channels { display:flex; gap:11px; margin-top:18px; max-width:880px; }
+.ch { flex:1; border-radius:11px; overflow:hidden; }
+.ch-hd { padding:11px 14px; display:flex; align-items:center; gap:7px; }
+.ch-ico { font-size:16px; }
+.ch-nm { font-size:11px; font-weight:800; letter-spacing:.07em; }
+.ch-bd { padding:10px 14px; }
+.ci { padding:9px 0; }
+.ci + .ci { border-top: 1px solid var(--border); }
+.ci-tr { font-size:10px; font-weight:700; color:var(--white); }
+.ci-dst { font-size:10px; font-weight:600; margin-top:2px; }
+/* channel color variants */
+.ch-f .ch-hd { background:rgba(255,193,7,.1); border-bottom:1px solid rgba(255,193,7,.3); }
+.ch-f .ch-nm { color:var(--warn); } .ch-f .ci-dst { color:var(--warn); }
+.ch-f { border:1px solid rgba(255,193,7,.3); background:var(--card); }
+.ch-a .ch-hd { background:rgba(56,97,255,.1); border-bottom:1px solid rgba(56,97,255,.3); }
+.ch-a .ch-nm { color:var(--blue); } .ch-a .ci-dst { color:var(--blue); }
+.ch-a { border:1px solid rgba(56,97,255,.3); background:var(--card); }
+.ch-r .ch-hd { background:rgba(124,59,255,.1); border-bottom:1px solid rgba(124,59,255,.3); }
+.ch-r .ch-nm { color:var(--violet); } .ch-r .ci-dst { color:var(--violet); }
+.ch-r { border:1px solid rgba(124,59,255,.3); background:var(--card); }
+.ch-footer {
+  margin-top:12px; padding:10px 18px;
+  background:rgba(124,59,255,.09); border:1px solid rgba(124,59,255,.3);
+  border-radius:8px; font-size:12px; font-weight:700; color:var(--violet);
+  text-align:center; max-width:880px;
+}
+
+/* ═══════════ SLIDE 8 — TAXONOMIA ═══════════ */
+.principles { display:flex; flex-wrap:wrap; gap:11px; justify-content:center; margin-top:20px; max-width:760px; }
+.pp {
+  background:var(--card); border:1px solid var(--border); border-radius:11px;
+  padding:14px 18px; text-align:center; min-width:138px;
+}
+.pp-i { font-size:24px; margin-bottom:6px; }
+.pp-n { font-size:13px; font-weight:700; }
+.pp-d { font-size:10px; color:var(--muted); margin-top:3px; line-height:1.4; }
+.tax-caption { margin-top:14px; font-size:13px; font-weight:600; color:var(--blue); }
+
+/* ═══════════ SLIDE 9 — TECNOLOGIA ═══════════ */
+.techs { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:18px; }
+.tech {
+  background:rgba(56,97,255,.09); border:1px solid rgba(56,97,255,.25);
+  border-radius:8px; padding:8px 16px; font-size:13px; font-weight:600; color:var(--blue);
+}
+.datasrc { display:flex; gap:10px; align-items:center; justify-content:center; margin-top:18px; flex-wrap:wrap; }
+.ds {
+  background:var(--card); border:1px solid var(--border); border-radius:8px;
+  padding:9px 16px; font-size:13px; font-weight:600; color:var(--muted); text-align:center;
+}
+.ds.vg { color:var(--blue); border-color:rgba(56,97,255,.4); }
+.da { font-size:16px; color:var(--blue); }
+.scale-b {
+  margin-top:18px; padding:11px 24px;
+  background:rgba(46,213,115,.09); border:1px solid rgba(46,213,115,.3);
+  border-radius:9px; font-size:14px; font-weight:700; color:var(--success); text-align:center;
+  max-width:660px;
+}
+.no-bias {
+  font-size:13px; color:var(--muted); margin-top:12px; max-width:580px; line-height:1.6;
+}
+
+/* ═══════════ SLIDE 10 — IMPACTO ═══════════ */
+.metrics { display:flex; gap:18px; margin-top:18px; }
+.mt { flex:1; border-radius:12px; padding:18px 14px; text-align:center; }
+.mt-n { font-size:54px; font-weight:900; line-height:1; }
+.mt-l { font-size:12px; font-weight:600; margin-top:7px; line-height:1.4; opacity:.9; }
+.mt-r { background:rgba(255,71,87,.1);  border:1px solid rgba(255,71,87,.3);  color:var(--danger); }
+.mt-g { background:rgba(46,213,115,.1); border:1px solid rgba(46,213,115,.3); color:var(--success); }
+.mt-b { background:rgba(56,97,255,.1);  border:1px solid rgba(56,97,255,.3);  color:var(--blue); }
+.cq { margin-top:22px; max-width:640px; font-size:16px; font-style:italic; font-weight:600; color:var(--violet); line-height:1.55; }
+.ct { margin-top:14px; font-size:20px; font-weight:800; color:var(--blue); letter-spacing:-.3px; }
+
+/* Force dark even in light-mode embeds */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="light"]) { --bg: #070A12; }
+  body { background: #070A12; }
+}
+:root[data-theme="light"] { --bg: #070A12; }
+</style>
+
+<!-- PROGRESS BAR -->
+<div id="progress-bar"><div id="progress-fill"></div></div>
+
+<div id="slides">
+
+  <!-- ══ SLIDE 1 — ABERTURA (25s) ══ -->
+  <div class="slide active" data-idx="0">
+    <div class="col">
+      <div class="s1-logo a1 as">vig<span class="ia">IA</span></div>
+      <div class="s1-tag a2">A IA que chega antes do aluno desistir</div>
+      <div class="divider a3"></div>
+      <div class="s1-inst a3">São Judas Polo Santo Amaro &nbsp;·&nbsp; FADERGS &nbsp;·&nbsp; Ecossistema Ânima</div>
+      <div class="s1-inst a3" style="font-size:13px;margin-top:4px;opacity:0.7;">Equipe vigIA &nbsp;·&nbsp; Orientação: Prof.ª Mariana</div>
+      <div class="s1-event a4">
+        <strong>2º Hackathon Sintehctica 2026</strong><br>
+        Linha 1 — Aprendizagem Hiperpersonalizada com IA e Neurociência
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 2 — O PROBLEMA (45s) ══ -->
+  <div class="slide" data-idx="1">
+    <div class="col">
+      <div class="slide-badge a1">02 — O PROBLEMA</div>
+      <div class="s2-stat a2">1 em 4</div>
+      <div class="s2-label a2">alunos abandona o ensino superior no Brasil</div>
+      <div class="s2-src a2">Fonte: INEP 2025</div>
+      <div class="s2-story a3" style="margin-top:8px;">
+        As instituições investem muito em <strong>captação</strong> — campanhas, bolsas, processos seletivos.<br>
+        Mas é a <strong style="color:var(--blue)">retenção que fecha o ciclo.</strong><br>
+        Um aluno retido gera receita recorrente, indica outros e dilui o custo de aquisição.
+      </div>
+      <div class="s2-story a4" style="margin-top:6px;border-left:3px solid var(--border);padding-left:14px;font-style:italic;">
+        Conheça Maria. Entrou motivada, passou na primeira prova,
+        mas começou a faltar. Mandou mensagem — não teve resposta.
+        No terceiro mês, parou de aparecer.
+      </div>
+      <div class="s2-quote a5">O que faltou para Maria? &nbsp;Alguém chegar antes.</div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 3 — SOLUÇÃO (30s) ══ -->
+  <div class="slide" data-idx="2">
+    <div class="col">
+      <div class="slide-badge a1">03 — A SOLUÇÃO</div>
+      <div style="font-size:26px;font-weight:800;margin-bottom:4px;" class="a1">
+        Plataforma modular com 5 frentes
+      </div>
+      <div class="modules a2">
+        <div class="mod">
+          <div class="mod-n">MÓD. 01</div>
+          <div class="mod-nm">Diagnóstico Cognitivo</div>
+          <div class="mod-d">Perfil do aluno no primeiro acesso</div>
+        </div>
+        <div class="mod">
+          <div class="mod-n">MÓD. 02</div>
+          <div class="mod-nm">Trilha Personalizada</div>
+          <div class="mod-d">Itinerário adaptado ao perfil</div>
+        </div>
+        <div class="mod">
+          <div class="mod-n">MÓD. 03</div>
+          <div class="mod-nm">Microlearning Adaptativo</div>
+          <div class="mod-d">Conteúdo em micro-doses precisas</div>
+        </div>
+        <div class="mod">
+          <div class="mod-n">MÓD. 04</div>
+          <div class="mod-nm">Simulados Inteligentes</div>
+          <div class="mod-d">Avaliação contextual contínua</div>
+        </div>
+        <div class="mod hl a3">
+          <div class="mod-n">MÓD. 05</div>
+          <div class="mod-nm">⚡ Vigilância Institucional</div>
+          <div class="mod-d">Radar contínuo · Alertas automáticos · Dia 1</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 4 — COMO O RADAR FUNCIONA (40s) ══ -->
+  <div class="slide" data-idx="3">
+    <div class="col">
+      <div class="slide-badge a1">04 — COMO O RADAR FUNCIONA</div>
+      <div style="font-size:24px;font-weight:800;margin-bottom:4px;" class="a1">
+        O aluno não vê. Não preenche. Não faz nada.
+      </div>
+      <div class="flow a2">
+        <div class="fstep">
+          <div class="fcirc">🎓</div>
+          <div class="flbl">MATRÍCULA</div>
+          <div class="fsub">Ativa o monitoramento instantaneamente</div>
+        </div>
+        <div class="farr">→</div>
+        <div class="fstep">
+          <div class="fcirc" style="border-color:var(--violet);background:rgba(124,59,255,.13)">📊</div>
+          <div class="flbl">LMS / ERP / AVA</div>
+          <div class="fsub">Dados alimentados automaticamente</div>
+        </div>
+        <div class="farr">→</div>
+        <div class="fstep">
+          <div class="fcirc" style="border-color:var(--warn);background:rgba(255,193,7,.13)">⚙️</div>
+          <div class="flbl">SCORE</div>
+          <div class="fsub">5 dimensões em tempo real</div>
+        </div>
+        <div class="farr">→</div>
+        <div class="fstep">
+          <div class="fcirc" style="border-color:var(--danger);background:rgba(255,71,87,.13)">🚨</div>
+          <div class="flbl">ALERTA</div>
+          <div class="fsub">Limiar atingido automaticamente</div>
+        </div>
+        <div class="farr">→</div>
+        <div class="fstep">
+          <div class="fcirc" style="border-color:var(--success);background:rgba(46,213,115,.13)">✅</div>
+          <div class="flbl">CANAL CERTO</div>
+          <div class="fsub">Roteamento sem triagem manual</div>
+        </div>
+      </div>
+      <div class="radar-msg a3">
+        🔒 &nbsp;O radar é da instituição — o aluno não sabe que está sendo monitorado.
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-top:10px;" class="a4">Quem usa o vigIA:</div>
+      <div class="rchips a4">
+        <div class="rchip">👨‍🏫 Professor</div>
+        <div class="rchip">🧑‍💼 Tutor</div>
+        <div class="rchip">🏛 Coordenação</div>
+        <div class="rchip">💳 Setor Financeiro</div>
+        <div class="rchip no">✕ Nunca: o aluno</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 5 — 6 SINAIS (30s) ══ -->
+  <div class="slide" data-idx="4">
+    <div class="col">
+      <div class="slide-badge a1">05 — PAINEL INSTITUCIONAL</div>
+      <div style="font-size:24px;font-weight:800;margin-bottom:4px;" class="a1">
+        6 momentos críticos — detectados automaticamente
+      </div>
+      <div class="sinais">
+        <div class="sinal a2">
+          <div class="sn-i">🎓</div>
+          <div class="sn-t">Ingresso no curso</div>
+          <div class="sn-d">Monitoramento ativado no momento da matrícula</div>
+        </div>
+        <div class="sinal a2">
+          <div class="sn-i">📝</div>
+          <div class="sn-t">Primeira avaliação</div>
+          <div class="sn-d">Baseline de desempenho estabelecido</div>
+        </div>
+        <div class="sinal a3">
+          <div class="sn-i">📅</div>
+          <div class="sn-t">Mudança de semestre</div>
+          <div class="sn-d">Transição com alto risco de evasão</div>
+        </div>
+        <div class="sinal a3">
+          <div class="sn-i">📉</div>
+          <div class="sn-t">Queda de desempenho</div>
+          <div class="sn-d">Score cai abaixo do limiar definido</div>
+        </div>
+        <div class="sinal a4">
+          <div class="sn-i">💤</div>
+          <div class="sn-t">Baixa participação</div>
+          <div class="sn-d">Ausência no LMS, AVA e entregas</div>
+        </div>
+        <div class="sinal a4">
+          <div class="sn-i">🔄</div>
+          <div class="sn-t">Retorno após ausência</div>
+          <div class="sn-d">Reengajamento monitorado para consolidar</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 6 — RÉGUA / 5 DIMENSÕES (35s) ══ -->
+  <div class="slide" data-idx="5">
+    <div class="col">
+      <div class="slide-badge a1">06 — RÉGUA DE MEDIDA</div>
+      <div style="font-size:24px;font-weight:800;margin-bottom:4px;" class="a1">
+        Score Composto em 5 Dimensões
+      </div>
+      <div class="dims a2">
+        <div class="dim">📊 Notas</div>
+        <div class="dim">📅 Faltas</div>
+        <div class="dim">💳 Mensalidades</div>
+        <div class="dim">💻 Acesso LMS/AVA</div>
+        <div class="dim">📋 Entrega de Atividades</div>
+      </div>
+      <div class="zones a3">
+        <div class="zone zg"><div class="zl">VERDE</div><div class="zr">76–100</div><div class="za">Monitoramento padrão</div></div>
+        <div class="zone zy"><div class="zl">AMARELO</div><div class="zr">51–75</div><div class="za">Atenção preventiva</div></div>
+        <div class="zone zo"><div class="zl">LARANJA</div><div class="zr">41–50</div><div class="za">Intervenção recomendada</div></div>
+        <div class="zone zv"><div class="zl">VERMELHO</div><div class="zr">0–40</div><div class="za">Intervenção imediata</div></div>
+      </div>
+      <div class="thresholds a4">
+        <div class="thr thr-w">
+          <div class="thr-s">≤ 40</div>
+          <div class="thr-l">ALERTA IMEDIATO</div>
+          <div class="thr-a">Canal responsável notificado automaticamente</div>
+        </div>
+        <div class="thr thr-r">
+          <div class="thr-s">≤ 25</div>
+          <div class="thr-l">INTERVENÇÃO PRIORITÁRIA</div>
+          <div class="thr-a">Todos os canais ativados simultaneamente</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 7 — ROTEAMENTO (40s) ══ -->
+  <div class="slide" data-idx="6">
+    <div class="col">
+      <div class="slide-badge a1">07 — ROTEAMENTO INTELIGENTE</div>
+      <div style="font-size:22px;font-weight:800;margin-bottom:4px;" class="a1">
+        O problema define o canal — triagem automática, sem intervenção humana
+      </div>
+      <div class="channels">
+        <div class="ch ch-f a2">
+          <div class="ch-hd"><span class="ch-ico">💳</span><span class="ch-nm">CANAL FINANCEIRO</span></div>
+          <div class="ch-bd">
+            <div class="ci"><div class="ci-tr">⚠ Mensalidade 1 mês em atraso</div><div class="ci-dst">→ Consultor de Cobranças</div></div>
+            <div class="ci"><div class="ci-tr">⚠ Mensalidade 2+ meses</div><div class="ci-dst">→ Gerência Financeira</div></div>
+            <div class="ci"><div class="ci-tr">⚠ Score financeiro &lt; 40</div><div class="ci-dst">→ Negociação prioritária</div></div>
+          </div>
+        </div>
+        <div class="ch ch-a a3">
+          <div class="ch-hd"><span class="ch-ico">📚</span><span class="ch-nm">CANAL ACADÊMICO</span></div>
+          <div class="ch-bd">
+            <div class="ci"><div class="ci-tr">⚠ Nota abaixo de 5,5</div><div class="ci-dst">→ Professor da disciplina</div></div>
+            <div class="ci"><div class="ci-tr">⚠ Faltas acima de 25%</div><div class="ci-dst">→ Professor + Coordenação</div></div>
+            <div class="ci"><div class="ci-tr">⚠ Entregas &gt;25% faltando</div><div class="ci-dst">→ Tutor + Professor</div></div>
+          </div>
+        </div>
+        <div class="ch ch-r a4">
+          <div class="ch-hd"><span class="ch-ico">🎯</span><span class="ch-nm">CANAL DE RETENÇÃO</span></div>
+          <div class="ch-bd">
+            <div class="ci"><div class="ci-tr">⚠ Acesso LMS ausente</div><div class="ci-dst">→ Tutor EAD</div></div>
+            <div class="ci"><div class="ci-tr">⚠ Score geral &lt; 25</div><div class="ci-dst">→ Coord. + todos os canais</div></div>
+            <div class="ci"><div class="ci-tr">⚠ Múltiplos alertas simultâneos</div><div class="ci-dst">→ Marketing de Retenção</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="ch-footer a5">
+        Um único score &nbsp;·&nbsp; Três canais &nbsp;·&nbsp; Triagem automática<br>
+        O responsável certo recebe o alerta certo, no momento certo.
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 8 — TAXONOMIA ÂNIMA (25s) ══ -->
+  <div class="slide" data-idx="7">
+    <div class="col">
+      <div class="slide-badge a1">08 — ALINHAMENTO PEDAGÓGICO</div>
+      <div style="font-size:24px;font-weight:800;margin-bottom:4px;" class="a1">
+        Taxonomia Ânima — 5 Princípios de Neuroaprendizagem
+      </div>
+      <div style="font-size:14px;color:var(--muted);margin-top:4px;" class="a2">
+        O vigIA não é IA genérica — foi construído sobre a ciência da própria instituição.
+      </div>
+      <div class="principles">
+        <div class="pp a2"><div class="pp-i">🔁</div><div class="pp-n">Repetição Espaçada</div><div class="pp-d">Revisões nos momentos ideais de consolidação</div></div>
+        <div class="pp a3"><div class="pp-i">🧠</div><div class="pp-n">Aprendizagem Ativa</div><div class="pp-d">Engajamento real, não passivo</div></div>
+        <div class="pp a3"><div class="pp-i">⚡</div><div class="pp-n">Microlearning</div><div class="pp-d">Conteúdo em doses precisas</div></div>
+        <div class="pp a4"><div class="pp-i">💬</div><div class="pp-n">Feedback Imediato</div><div class="pp-d">Retorno no momento exato</div></div>
+        <div class="pp a5"><div class="pp-i">🎯</div><div class="pp-n">Personalização</div><div class="pp-d">Cada aluno, uma trilha única</div></div>
+      </div>
+      <div class="tax-caption a6">
+        Cada alerta, cada intervenção, cada trilha — segue a ciência da própria instituição.
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 9 — TECNOLOGIA (25s) ══ -->
+  <div class="slide" data-idx="8">
+    <div class="col">
+      <div class="slide-badge a1">09 — TECNOLOGIA E ESCALA</div>
+      <div style="font-size:24px;font-weight:800;margin-bottom:4px;" class="a1">
+        Arquitetura universal — pronta para escalar
+      </div>
+      <div class="techs a2">
+        <div class="tech">🤖 LLM Adaptativo</div>
+        <div class="tech">📊 Learning Analytics Tempo Real</div>
+        <div class="tech">🔒 LGPD Nativo</div>
+        <div class="tech">🔗 API Aberta</div>
+      </div>
+      <div class="datasrc a3">
+        <div class="ds">LMS</div><div class="da">→</div>
+        <div class="ds">ERP Acadêmico</div><div class="da">→</div>
+        <div class="ds">AVA</div><div class="da">→</div>
+        <div class="ds vg">vigIA</div>
+      </div>
+      <div class="no-bias a3">
+        O aluno não preenche absolutamente nada — eliminando viés de autorrelato,
+        monitorando inclusive quem está em crise mais profunda.
+      </div>
+      <div class="scale-b a4">
+        🌐 &nbsp;Ânima = piloto &nbsp;·&nbsp; Expansão para qualquer instituição com LMS
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 10 — IMPACTO (25s) ══ -->
+  <div class="slide" data-idx="9">
+    <div class="col">
+      <div class="slide-badge a1">10 — IMPACTO ESPERADO</div>
+      <div style="font-size:24px;font-weight:800;margin-bottom:4px;" class="a1">
+        Três números que mudam a equação
+      </div>
+      <div class="metrics a2">
+        <div class="mt mt-r">
+          <div class="mt-n">−30%</div>
+          <div class="mt-l">Taxa de evasão nos primeiros semestres</div>
+        </div>
+        <div class="mt mt-g">
+          <div class="mt-n">+40%</div>
+          <div class="mt-l">Engajamento dos alunos em risco</div>
+        </div>
+        <div class="mt mt-b">
+          <div class="mt-n">6×</div>
+          <div class="mt-l">Detecção de risco antes dos sistemas tradicionais</div>
+        </div>
+      </div>
+      <div class="cq a3">
+        "Cada aluno que chega ao fim do curso é um futuro que a sociedade não perdeu."
+      </div>
+      <div class="ct a4">Equipe vigIA. Obrigado.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- CONTROLS -->
+<div id="controls">
+  <button class="ctrl-btn" id="btn-prev" title="Anterior (←)">‹</button>
+  <span id="slide-counter">1 / 10</span>
+  <button class="ctrl-btn" id="btn-next" title="Próximo (→)">›</button>
+  <button class="ctrl-btn" id="btn-play" title="Auto-avanço (P)">⏸ Auto</button>
+  <span id="timer-display">0:25</span>
+</div>
+
+<script>
+const TIMINGS = [20, 45, 30, 40, 30, 35, 40, 25, 25, 25];
+const slides       = document.querySelectorAll('.slide');
+const progressFill = document.getElementById('progress-fill');
+const counter      = document.getElementById('slide-counter');
+const btnPrev      = document.getElementById('btn-prev');
+const btnNext      = document.getElementById('btn-next');
+const btnPlay      = document.getElementById('btn-play');
+const timerDisplay = document.getElementById('timer-display');
+
+let cur       = 0;
+let autoPlay  = true;
+let timeLeft  = TIMINGS[0];
+let countdown = null;
+
+function fmt(s) {
+  return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+}
+
+function resetAnimations(slide) {
+  slide.querySelectorAll('[class*=" a"], .a1,.a2,.a3,.a4,.a5,.a6,.a7,.ai,.as').forEach(el => {
+    const name = el.style.animationName;
+    el.style.animationName = 'none';
+    el.offsetWidth; // force reflow
+    el.style.animationName = name || '';
+  });
+}
+
+function goTo(idx) {
+  if (idx < 0 || idx >= slides.length) return;
+
+  slides[cur].classList.remove('active');
+  slides[cur].classList.add('exiting');
+  const prev = cur;
+  cur = idx;
+  setTimeout(() => {
+    slides[prev].classList.remove('exiting');
+    resetAnimations(slides[prev]);
+  }, 350);
+
+  resetAnimations(slides[cur]);
+  slides[cur].classList.add('active');
+
+  counter.textContent = (cur + 1) + ' / ' + slides.length;
+  progressFill.style.width = ((cur + 1) / slides.length * 100) + '%';
+  timeLeft = TIMINGS[cur];
+  timerDisplay.textContent = fmt(timeLeft);
+
+  if (autoPlay) {
+    stopCountdown();
+    startCountdown();
+  }
+}
+
+function startCountdown() {
+  stopCountdown();
+  countdown = setInterval(() => {
+    timeLeft = Math.max(0, timeLeft - 1);
+    timerDisplay.textContent = fmt(timeLeft);
+    if (timeLeft === 0) {
+      stopCountdown();
+      if (autoPlay) {
+        if (cur < slides.length - 1) {
+          goTo(cur + 1);
+        } else {
+          // End of deck
+          setAutoPlay(false);
+        }
+      }
+    }
+  }, 1000);
+}
+
+function stopCountdown() {
+  if (countdown) { clearInterval(countdown); countdown = null; }
+}
+
+function setAutoPlay(on) {
+  autoPlay = on;
+  btnPlay.textContent = on ? '⏸ Auto' : '▶ Auto';
+  btnPlay.classList.toggle('playing', on);
+  if (on) startCountdown();
+  else stopCountdown();
+}
+
+// Event listeners
+btnPrev.addEventListener('click', () => { if (cur > 0) goTo(cur - 1); });
+btnNext.addEventListener('click', () => { if (cur < slides.length - 1) goTo(cur + 1); });
+btnPlay.addEventListener('click', () => setAutoPlay(!autoPlay));
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+    e.preventDefault(); if (cur < slides.length - 1) goTo(cur + 1);
+  } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+    e.preventDefault(); if (cur > 0) goTo(cur - 1);
+  } else if (e.key === ' ') {
+    e.preventDefault();
+    if (cur < slides.length - 1) goTo(cur + 1);
+  } else if (e.key === 'p' || e.key === 'P') {
+    setAutoPlay(!autoPlay);
+  }
+});
+
+// Touch/swipe support
+let txStart = 0;
+document.addEventListener('touchstart', e => { txStart = e.touches[0].clientX; }, { passive: true });
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - txStart;
+  if (Math.abs(dx) > 50) { dx < 0 ? btnNext.click() : btnPrev.click(); }
+}, { passive: true });
+
+// Boot
+goTo(0);
+setAutoPlay(true);
+</script>
